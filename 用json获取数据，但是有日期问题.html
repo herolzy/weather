@@ -24,32 +24,34 @@
 <script type="text/javascript" src='js/jquery-3.1.0.min.js'></script>
 <script src='js/echarts.common.min.js'></script>
 <script type="text/javascript">
+
     $(function () {
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'));
 
         $.ajax({
+            //数据地址
+            url: 'http://api.openweathermap.org/data/2.5/forecast/daily?q=shanghai&mode=json&units=metric&cnt=5&appid=642beaf999238195980b4660d6e7512d',
             type: 'GET',
-            dataType: 'xml',
-            url: 'http://api.openweathermap.org/data/2.5/forecast/daily?q=shanghai&mode=xml&units=metric&cnt=5&appid=642beaf999238195980b4660d6e7512d',
+            dataType: 'json',
             success: function (d) {
 
-                var cityname = $(d).find('location>name')[0].innerHTML;
-                // console.log(cityname);
+                var cityname = d.city.name;
                 //声明一个 时间数组，最高温数组，最低温数组
                 var maxtemp = [],
                     mintemp = [],
                     timetemp = [];
                 //循环返回的数据的list
-                $(d).find('forecast>time').each(function () {
+                $.each(d.list,function () {
                     //因为返回的是列氏度，-273.15就是摄氏度，toFixed（2）是取小数后2位
-                    var max = $(this).find('temperature').attr('max');
-                    var min = $(this).find('temperature').attr('min');
-                    var time =$(this).attr('day');
+                    var max = this.temp.max;
+                    var min = this.temp.min;
+                    var time = this.dt;
+                    
 
                     maxtemp.push(max);
                     mintemp.push(min);
-                    timetemp.push(time);
+                    // timetemp.push(time);
                 })
 
                 var option = {
